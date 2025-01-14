@@ -61,7 +61,7 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
       try (Connection com = DriverManager.getConnection(
           "jdbc:mysql://localhost/",
           "root@localhost",
-          "password");
+          "6947");
           Statement statement = com.createStatement();
           ResultSet resultSet = statement.executeQuery("select * from player_score;")) {
         while (resultSet.next()) {
