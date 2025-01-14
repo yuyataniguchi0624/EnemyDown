@@ -58,25 +58,23 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
   @Override
   public boolean onExecutePlayerCommand(Player player, Command command, String label, String[] args) {
     if (args.length == 1 && List.equals(args[0])) {
-      String url = "jdbc:mysql://spiqotdb.comklmdrpq@.ap-northeast-1.rds.amazonaws.com:3306/spigot_plugin";
-      String user = "root";
-      String password = "rootroot";
-      String sql = "select * from player_scoer;";
-
-      try (Connection com = DriverManager.getConnection(url, user, password);
-        Statement statement = com.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql)) {
-      while (resultSet.next()) {
-        int id = resultSet.getInt("id");
-        String name = resultSet.getString("player_name");
-        int score = resultSet.getInt("score");
-        String difficulty = resultSet.getString("difficulty");
-        LocalDateTime date = LocalDateTime.parse(resultSet.getString("registered_at"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        player.sendMessage(id + " | " + name + " | " +difficulty + " " + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-      }
-        } catch (SQLException e) {
-          e.printStackTrace();
+      try (Connection com = DriverManager.getConnection(
+          "jdbc:mysql://localhost/",
+          "root@localhost",
+          "6947");
+          Statement statement = com.createStatement();
+          ResultSet resultSet = statement.executeQuery("select * from player_score;")) {
+        while (resultSet.next()) {
+          int id = resultSet.getInt("id");
+          String name = resultSet.getString("player_name");
+          int score = resultSet.getInt("score");
+          String difficulty = resultSet.getString("difficulty");
+          LocalDateTime date = LocalDateTime.parse(resultSet.getString("registered_at"),
+              DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+          player.sendMessage(id + " | " + name + " | " +difficulty + " " + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
       return false;
     }
@@ -247,9 +245,9 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
    */
   private EntityType getEnemy(String difficulty) {
     List<EntityType> enemyList = switch (difficulty) {
-      case NORMAL -> List.of(EntityType.ZOMBIE, EntityType.SKELETON);
-      case HARD -> List.of(EntityType.ZOMBIE, EntityType.SKELETON, EntityType.WITCH);
-      default -> List.of(EntityType.ZOMBIE);
+      case NORMAL -> java.util.List.of(EntityType.ZOMBIE, EntityType.SKELETON);
+      case HARD -> java.util.List.of(EntityType.ZOMBIE, EntityType.SKELETON, EntityType.WITCH);
+      default -> java.util.List.of(EntityType.ZOMBIE);
     };
     return enemyList.get(new SplittableRandom().nextInt(enemyList.size()));
   }
