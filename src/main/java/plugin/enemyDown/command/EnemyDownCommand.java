@@ -55,6 +55,7 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
     this.main = main;
   }
 
+  
   @Override
   public boolean onExecutePlayerCommand(Player player, Command command, String label, String[] args) {
     if (args.length == 1 && List.equals(args[0])) {
