@@ -49,13 +49,13 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
   private Main main;
   private List<PlayerScore> playerScoreList = new ArrayList<>();
   private List<Entity> spawnEntityList = new ArrayList<>();
-  
+
 
   public EnemyDownCommand(Main main) {
     this.main = main;
   }
 
-  
+
   @Override
   public boolean onExecutePlayerCommand(Player player, Command command, String label, String[] args) {
     if (args.length == 1 && List.equals(args[0])) {
@@ -195,16 +195,31 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
    *
    * @param player    　コマンドを実行したプレイヤー
    * @param difficulty 難易度
-   * @param nowPlayer 　プレイヤースコア情報
+   * @param nowPlayerScore 　プレイヤースコア情報
    */
-  private void gamePlay(Player player, PlayerScore nowPlayer, String difficulty) {
+  private void gamePlay(Player player, PlayerScore nowPlayerScore, String difficulty) {
     Bukkit.getScheduler().runTaskTimer(main, Runnable -> {
-      if (nowPlayer.getGameTime() <= 0 ) {
+      if (nowPlayerScore.getGameTime() <= 0 ) {
         Runnable.cancel();
 
         player.sendTitle("ゲームが終了しました。",
-            nowPlayer.getPlayerName() + " 合計" + nowPlayer.getScore() + "点！",
+            nowPlayerScore.getPlayerName() + " 合計" + nowPlayerScore.getScore() + "点！",
             0, 60, 0);
+
+        try (Connection com = DriverManager.getConnection(
+            "jdbc:mysql://localhost/spigot_server",
+            "root",
+            "6947");
+            Statement statement = com.createStatement()) {
+
+          statement.executeUpdate(
+              "insert player_score(player_name, score, difficulty, registered_dt) "
+                + "values('" + nowPlayerScore.getPlayerName() + "'," + nowPlayerScore.getScore() + ",'"
+                + difficulty + "', now());");
+
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
 
         spawnEntityList.forEach(Entity::remove);
         spawnEntityList.clear();
@@ -214,7 +229,7 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
       }
       Entity spawnEntity = player.getWorld().spawnEntity(getEnemySpwnLocation(player), getEnemy(difficulty));
       spawnEntityList.add(spawnEntity);
-      nowPlayer.setGameTime(nowPlayer.getGameTime() - 5);
+      nowPlayerScore.setGameTime(nowPlayerScore.getGameTime() - 5);
     }, 0, 5 * 20);
   }
 
