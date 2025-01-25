@@ -1,5 +1,6 @@
 package plugin.enemyDown.command;
 
+import java.io.IOException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,11 @@ public abstract class BaseCommand implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (sender instanceof Player player) {
-      return onExecutePlayerCommand(player, command, label, args);
+      try {
+        return onExecutePlayerCommand(player, command, label, args);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     } else {
       return onExecuteNPCCommand(sender, command, label, args);
     }
@@ -28,7 +33,7 @@ public abstract class BaseCommand implements CommandExecutor {
    * @param args コマンド引数
    * @return　処理の実行有無
    */
-  public abstract boolean onExecutePlayerCommand(Player player, Command command, String label, String[] args);
+  public abstract boolean onExecutePlayerCommand(Player player, Command command, String label, String[] args) throws IOException;
 
   /**
    * コマンド実行者がプレイヤー以外だった場合に実行します。
