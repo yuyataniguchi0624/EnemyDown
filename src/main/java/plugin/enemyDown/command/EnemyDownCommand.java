@@ -2,11 +2,6 @@ package plugin.enemyDown.command;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +78,7 @@ public class EnemyDownCommand extends BaseCommand implements Listener {
               + playerScore.getPlayerName() + " | "
               + playerScore.getScore() + " | "
               + playerScore.getDifficulty() + " | "
-              + PlayerScore.getRegisteredAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+              + playerScore.getRegisteredAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
       }
       return false;
